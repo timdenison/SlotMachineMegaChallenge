@@ -14,8 +14,6 @@ namespace SlotMachineMegaChallenge
         
         int userWinnings = 0;
         int userBet = 0;
-        
-        
         int winningsMultiplier = 0;
         
         string[] displayedImages = new string[3];
@@ -60,21 +58,29 @@ namespace SlotMachineMegaChallenge
             int userAmount = Convert.ToInt32(ViewState["userAmount"]);
             
             if (!int.TryParse(betBox.Text.Trim(), out userBet)) Response.Redirect(Request.RawUrl);
-            spin();
-            userAmount = userAmount - userBet;
-            ViewState["userAmount"] = userAmount;
-            moneyLabel.Text = String.Format("Player's Money: {0:C}", userAmount);
-            calculateResults();
-
-            if (userAmount == 0)
+            if (userAmount < userBet)
             {
-                MessageBox.Show("You're out of money. Here, let us stake you. ", "Bust!", MessageBoxButtons.OK);
-                userAmount = 100;
+                MessageBox.Show("You can't bet more than you have.", "Bet exceeds holdings.", MessageBoxButtons.OK);
+                betBox.Text = userAmount.ToString();
+            }
+            else
+            {
+                spin();
+                userAmount = userAmount - userBet;
                 ViewState["userAmount"] = userAmount;
                 moneyLabel.Text = String.Format("Player's Money: {0:C}", userAmount);
-            }
-            
+                calculateResults();
 
+                if (userAmount <= 0)
+                {
+                    MessageBox.Show("You're out of money. Here, let us stake you. ", "Bust!", MessageBoxButtons.OK);
+                    userAmount = 100;
+                    ViewState["userAmount"] = userAmount;
+                    moneyLabel.Text = String.Format("Player's Money: {0:C}", userAmount);
+                }
+
+
+            }
             
 
 
